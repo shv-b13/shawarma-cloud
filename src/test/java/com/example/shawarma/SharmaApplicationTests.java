@@ -1,10 +1,10 @@
-package com.example.shaurma;
+package com.example.shawarma;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ShaurmaApplicationTests {
+class SharmaApplicationTests {
 
     @Test
     void contextLoads() {
