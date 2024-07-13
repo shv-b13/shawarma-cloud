@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<head>
+  <title>Create Shawarma</title>
+</head>
+<body>
+<header th:insert="~{blocks/header :: header}"></header>
+
+<h1>Shawarma List</h1>
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Ingredients</th>
+    <th>Action</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="shawarma : ${shawarmas}">
+    <td th:text="${shawarma.name}">Name</td>
+    <td>
+      <ul>
+        <li th:each="ingredient : ${shawarma.ingredients}" th:text="${ingredient.name}">Ingredient</li>
+      </ul>
+    </td>
+    <td>
+      <a th:href="@{/orders/create/{shawarmaId}(shawarmaId=${shawarma.id})}">Order</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<footer th:insert="~{blocks/footer :: footer}"></footer>
+</body>
+</html>

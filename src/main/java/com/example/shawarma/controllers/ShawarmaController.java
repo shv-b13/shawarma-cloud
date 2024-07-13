@@ -6,13 +6,15 @@ import com.example.shawarma.models.Shawarma;
 import com.example.shawarma.repos.IngredientRepository;
 import com.example.shawarma.repos.ShawarmaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@RestController
-@RequestMapping("/shawarmas")
+@Controller
+@RequestMapping("/shawarma")
 public class ShawarmaController {
 
     private final ShawarmaRepository shawarmaRepository;
@@ -26,21 +28,26 @@ public class ShawarmaController {
 
     @GetMapping("/create")
     public String showCreateShawarmaForm(Model model) {
-        List<Ingredient> ingredients = ingredientRepository.findAll();
-        model.addAttribute("ingredients", ingredients);
+        model.addAttribute("ingredients", ingredientRepository.findAll());
         model.addAttribute("shawarma", new Shawarma());
         return "createShawarma";
     }
 
     @PostMapping("/create")
-    public Shawarma createShawarma(@RequestBody ShawarmaDto shawarmaDto) {
-        Shawarma shawarma = new Shawarma();
-        shawarma.setName(shawarmaDto.getName());
-        shawarma.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-
-        List<Ingredient> ingredients = ingredientRepository.findAllById(shawarmaDto.getIngredientIds());
+    public String createShawarma(@ModelAttribute Shawarma shawarma, Model model) {
+        List<Ingredient> ingredients = ingredientRepository.findAllById(
+                shawarma.getIngredients().stream().map(Ingredient::getId).collect(Collectors.toList())
+        );
         shawarma.setIngredients(ingredients);
+        shawarma.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        shawarmaRepository.save(shawarma);
+        return "redirect:/shawarma/list";
+    }
 
-        return shawarmaRepository.save(shawarma);
+    @GetMapping("/list")
+    public String listShawarmas(Model model) {
+        model.addAttribute("shawarmas", shawarmaRepository.findAll());
+        return "shawarmaList";
     }
 }
+
